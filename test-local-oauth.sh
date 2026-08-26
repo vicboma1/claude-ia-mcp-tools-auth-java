@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # MCP Users Server Local Test with OAuth2
-# Tests all tools with JWT token authentication
+#
+# Note: stdio mode (McpServer) doesn't support HTTP headers.
+# For full OAuth2 support with JWT headers, use test-railway-oauth.sh (WebSocket mode).
+# This script demonstrates OAuth2 concepts with JWT tokens.
 
 set -e
 
@@ -62,9 +65,9 @@ test_tool() {
     echo ""
 }
 
-# Build and start server in background
-echo "Compiling and starting server..."
-mvn compile -q 2>/dev/null
+# JAR already built, ready to test
+echo "✅ Ready to test MCP with OAuth2 authentication"
+echo ""
 
 # Run tests
 test_tool "Initialize Server" \

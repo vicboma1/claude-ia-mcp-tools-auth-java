@@ -24,7 +24,7 @@ jobs:
       - name: Run deployment validation
         run: |
           echo "Running deployment validation..."
-          bash validate-deployment.sh https://claude-ia-mcp-tools-java-staging.up.railway.app
+          bash validate-deployment.sh https://claude-ia-mcp-tools-auth-java-staging.up.railway.app
 
       - name: Run MCP tests
         run: |

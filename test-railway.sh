@@ -3,7 +3,7 @@
 # MCP Users Server - Railway Test Script
 # Tests all 5 tools of the MCP server running on Railway via WebSocket
 
-RAILWAY_URL="wss://claude-ia-mcp-tools-java-staging.up.railway.app"
+RAILWAY_URL="wss://claude-ia-mcp-tools-auth-java-staging.up.railway.app"
 
 echo "================================================"
 echo "MCP Users Server - Railway WebSocket Test"

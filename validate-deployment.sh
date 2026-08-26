@@ -2,7 +2,7 @@
 
 # Validate MCP Deployment Configuration
 
-RAILWAY_URL="${1:-https://claude-ia-mcp-tools-java-staging.up.railway.app}"
+RAILWAY_URL="${1:-https://claude-ia-mcp-tools-auth-java-staging.up.railway.app}"
 
 echo "================================================"
 echo "MCP Deployment Configuration Validator"

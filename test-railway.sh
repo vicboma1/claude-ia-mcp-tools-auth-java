@@ -238,18 +238,23 @@ test_tool() {
     echo "Test: $name"
 
     # Send command to MCP server via WebSocket
-    response=$(echo "$command" | websocat "$RAILWAY_URL" 2>&1 | head -1)
+    # Use timeout to prevent hanging, capture full response without head -1
+    response=$(timeout 10 bash -c "echo '$command' | websocat '$RAILWAY_URL' 2>&1" 2>/dev/null)
 
-    if [ -z "$response" ]; then
+    if [ $? -eq 124 ]; then
+        echo "⚠️  Timeout (server took too long to respond)"
+    elif [ -z "$response" ]; then
         echo "⚠️  No response (server may not be running)"
         echo "Hint: Make sure the Railway app is deployed and running"
     else
+        # Validate JSON response
         if echo "$response" | jq empty 2>/dev/null; then
             echo "✅ Valid JSON-RPC response - OK"
             echo "Response:"
             echo "$response" | jq '.'
         else
             echo "❌ Invalid response format"
+            echo "Raw response: $response"
         fi
     fi
     echo ""

@@ -56,8 +56,9 @@ test_tool() {
 
     if [ -n "$response" ]; then
         if echo "$response" | jq empty 2>/dev/null; then
-            echo "✅ Valid JSON-RPC response"
-            echo "   $(echo "$response" | jq -r '.result.name // .error.message // "OK"')"
+            echo "✅ Valid JSON-RPC response - OK"
+            echo "Response:"
+            echo "$response" | jq '.'
         else
             echo "❌ Invalid response"
         fi

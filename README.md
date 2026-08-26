@@ -130,13 +130,13 @@ mvn test jacoco:report
 Use this for Claude Desktop or local testing:
 
 ```bash
-java -cp target/mcp-users-server-*.jar com.example.mcp.McpServer
+java -cp target/mcp-users-server-*.jar com.example.mcp.McpWebSocketServer
 ```
 
 Or with Maven:
 
 ```bash
-mvn exec:java -Dexec.mainClass="com.example.mcp.McpServer"
+mvn exec:java -Dexec.mainClass="com.example.mcp.McpWebSocketServer"
 ```
 
 Claude Desktop configuration:
@@ -146,7 +146,7 @@ Claude Desktop configuration:
   "mcpServers": {
     "users": {
       "command": "java",
-      "args": ["-cp", "path/to/mcp-users-server-1.0.0.jar", "com.example.mcp.McpServer"]
+      "args": ["-cp", "path/to/mcp-users-server-1.0.0.jar", "com.example.mcp.McpWebSocketServer"]
     }
   }
 }
@@ -257,7 +257,7 @@ See [POST_DEPLOY_VALIDATION.md](POST_DEPLOY_VALIDATION.md) and [install-ci-deps.
 ```bash
 # stdio mode
 echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | \
-  java -cp target/mcp-users-server-*.jar com.example.mcp.McpServer
+  java -cp target/mcp-users-server-*.jar com.example.mcp.McpWebSocketServer   
 
 # WebSocket mode (requires websocat)
 echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | \

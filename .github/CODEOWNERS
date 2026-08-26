@@ -1,0 +1,29 @@
+# CODEOWNERS file defines who is responsible for code in this repository
+# See: https://help.github.com/articles/about-codeowners/
+
+# Default owner for everything in the repo
+* @vicboma1
+
+# Core application code
+/src/main/java/com/example/api/ @vicboma1
+/src/main/java/com/example/business/ @vicboma1
+/src/main/java/com/example/mcp/ @vicboma1
+
+# Tests
+/src/test/ @vicboma1
+
+# Build and configuration
+pom.xml @vicboma1
+/src/main/resources/ @vicboma1
+
+# Documentation
+*.md @vicboma1
+/docs/ @vicboma1
+
+# CI/CD and workflows
+/.github/workflows/ @vicboma1
+/.github/dependabot.yml @vicboma1
+
+# Dependencies
+/.github/ @vicboma1
+# Last updated: Wed Aug 26 11:50:15     2026

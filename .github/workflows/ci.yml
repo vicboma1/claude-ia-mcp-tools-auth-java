@@ -1,0 +1,170 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test and Build
+
+    strategy:
+      matrix:
+        java-version: [ '11', '17', '21' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ matrix.java-version }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Run tests
+        run: mvn test -B
+
+      - name: Generate coverage report
+        run: mvn jacoco:report
+
+      - name: Display test results
+        if: always()
+        run: |
+          echo "=== Test Results ==="
+          if [ -f target/surefire-reports/TEST-*.xml ]; then
+            find target/surefire-reports -name "TEST-*.xml" -exec grep -H "errors=\|failures=\|tests=" {} \;
+          fi
+          echo ""
+          echo "=== Coverage Report ==="
+          if [ -f target/site/jacoco/index.html ]; then
+            echo "Coverage report generated successfully"
+          fi
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./target/site/jacoco/jacoco.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality Checks
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Run tests with coverage
+        run: mvn test jacoco:report
+
+      - name: Check test results
+        if: failure()
+        run: echo "Tests failed!"
+
+  sonarcloud:
+    runs-on: ubuntu-latest
+    name: SonarCloud Analysis
+    needs: test
+    if: github.event_name == 'push' && secrets.SONAR_TOKEN != ''
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build and analyze with SonarCloud
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=vicboma1_claude-ia-mcp-tools-java \
+            -Dsonar.organization=vicboma1-github \
+            -Dsonar.host.url=https://sonarcloud.io
+
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish Artifact
+    needs: [ test, code-quality ]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build JAR
+        run: mvn clean package -DskipTests
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mcp-users-server
+          path: target/mcp-users-server-*.jar
+          retention-days: 30
+
+  notify:
+    runs-on: ubuntu-latest
+    name: Notification
+    needs: [ test, code-quality ]
+    if: always()
+
+    steps:
+      - name: Check job status
+        run: |
+          if [ "${{ needs.test.result }}" = "failure" ]; then
+            echo " Tests failed"
+            exit 1
+          elif [ "${{ needs.code-quality.result }}" = "failure" ]; then
+            echo " Code quality checks failed"
+            exit 1
+          else
+            echo " All checks passed"
+          fi
+
+      - name: Notify success
+        if: success()
+        run: echo "CI/CD pipeline completed successfully!"
+
+      - name: Notify failure
+        if: failure()
+        run: echo "CI/CD pipeline failed!"

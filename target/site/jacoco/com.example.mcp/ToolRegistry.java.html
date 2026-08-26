@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ToolRegistry.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MCP Users Server</a> &gt; <a href="index.source.html" class="el_package">com.example.mcp</a> &gt; <span class="el_source">ToolRegistry.java</span></div><h1>ToolRegistry.java</h1><pre class="source lang-java linenums">package com.example.mcp;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class ToolRegistry {
+    private final Map&lt;String, ToolInfo&gt; tools;
+
+<span class="fc" id="L11">    public ToolRegistry() {</span>
+<span class="fc" id="L12">        this.tools = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L13">        registerTools();</span>
+<span class="fc" id="L14">    }</span>
+
+    private void registerTools() {
+<span class="fc" id="L17">        addTool(&quot;get_user&quot;,</span>
+                &quot;Get one user by ID.&quot;,
+<span class="fc" id="L19">                toolInputSchema(</span>
+<span class="fc" id="L20">                    prop(&quot;user_id&quot;, &quot;integer&quot;, &quot;The user ID&quot;)</span>
+                ),
+                new String[]{&quot;user_id&quot;}
+        );
+
+<span class="fc" id="L25">        addTool(&quot;list_users&quot;,</span>
+                &quot;List all users.&quot;,
+                new JsonObject(),
+                new String[]{}
+        );
+
+<span class="fc" id="L31">        addTool(&quot;create_user&quot;,</span>
+                &quot;Create a user.&quot;,
+<span class="fc" id="L33">                toolInputSchema(</span>
+<span class="fc" id="L34">                    prop(&quot;name&quot;, &quot;string&quot;, &quot;User name&quot;),</span>
+<span class="fc" id="L35">                    prop(&quot;email&quot;, &quot;string&quot;, &quot;User email&quot;)</span>
+                ),
+                new String[]{&quot;name&quot;, &quot;email&quot;}
+        );
+
+<span class="fc" id="L40">        addTool(&quot;update_user&quot;,</span>
+                &quot;Update a user's name and/or email.&quot;,
+<span class="fc" id="L42">                toolInputSchema(</span>
+<span class="fc" id="L43">                    prop(&quot;user_id&quot;, &quot;integer&quot;, &quot;The user ID&quot;),</span>
+<span class="fc" id="L44">                    prop(&quot;name&quot;, &quot;string&quot;, &quot;New name (optional)&quot;),</span>
+<span class="fc" id="L45">                    prop(&quot;email&quot;, &quot;string&quot;, &quot;New email (optional)&quot;)</span>
+                ),
+                new String[]{&quot;user_id&quot;}
+        );
+
+<span class="fc" id="L50">        addTool(&quot;delete_user&quot;,</span>
+                &quot;Delete a user.&quot;,
+<span class="fc" id="L52">                toolInputSchema(</span>
+<span class="fc" id="L53">                    prop(&quot;user_id&quot;, &quot;integer&quot;, &quot;The user ID&quot;)</span>
+                ),
+                new String[]{&quot;user_id&quot;}
+        );
+<span class="fc" id="L57">    }</span>
+
+    private void addTool(String name, String description, JsonObject inputSchema, String[] required) {
+<span class="fc" id="L60">        JsonObject schema = new JsonObject();</span>
+<span class="fc" id="L61">        schema.addProperty(&quot;type&quot;, &quot;object&quot;);</span>
+<span class="fc" id="L62">        schema.add(&quot;properties&quot;, inputSchema);</span>
+
+<span class="fc" id="L64">        JsonArray requiredArray = new JsonArray();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (String req : required) {</span>
+<span class="fc" id="L66">            requiredArray.add(req);</span>
+        }
+<span class="fc" id="L68">        schema.add(&quot;required&quot;, requiredArray);</span>
+
+<span class="fc" id="L70">        tools.put(name, new ToolInfo(name, description, schema));</span>
+<span class="fc" id="L71">    }</span>
+
+    private JsonObject toolInputSchema(JsonObject... properties) {
+<span class="fc" id="L74">        JsonObject result = new JsonObject();</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (JsonObject prop : properties) {</span>
+<span class="fc" id="L76">            String propName = prop.get(&quot;_name&quot;).getAsString();</span>
+<span class="fc" id="L77">            prop.remove(&quot;_name&quot;);</span>
+<span class="fc" id="L78">            result.add(propName, prop);</span>
+        }
+<span class="fc" id="L80">        return result;</span>
+    }
+
+    private JsonObject prop(String name, String type, String description) {
+<span class="fc" id="L84">        JsonObject prop = new JsonObject();</span>
+<span class="fc" id="L85">        prop.addProperty(&quot;_name&quot;, name);</span>
+<span class="fc" id="L86">        prop.addProperty(&quot;type&quot;, type);</span>
+<span class="fc" id="L87">        prop.addProperty(&quot;description&quot;, description);</span>
+<span class="fc" id="L88">        return prop;</span>
+    }
+
+    public Map&lt;String, ToolInfo&gt; getTools() {
+<span class="fc" id="L92">        return tools;</span>
+    }
+
+    public ToolInfo getTool(String name) {
+<span class="fc" id="L96">        return tools.get(name);</span>
+    }
+
+    public boolean hasTool(String name) {
+<span class="fc" id="L100">        return tools.containsKey(name);</span>
+    }
+
+    public static class ToolInfo {
+        public final String name;
+        public final String description;
+        public final JsonObject inputSchema;
+
+<span class="fc" id="L108">        public ToolInfo(String name, String description, JsonObject inputSchema) {</span>
+<span class="fc" id="L109">            this.name = name;</span>
+<span class="fc" id="L110">            this.description = description;</span>
+<span class="fc" id="L111">            this.inputSchema = inputSchema;</span>
+<span class="fc" id="L112">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

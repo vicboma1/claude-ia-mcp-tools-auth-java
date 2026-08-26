@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MCP Users Server</a> &gt; <a href="index.source.html" class="el_package">com.example.business</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.example.business;
+
+import com.example.api.ApiClient;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class UserService {
+    private final ApiClient api;
+
+<span class="fc" id="L14">    public UserService(ApiClient api) {</span>
+<span class="fc" id="L15">        this.api = api;</span>
+<span class="fc" id="L16">    }</span>
+
+    public Map&lt;String, Object&gt; getUser(int userId) throws IOException {
+<span class="fc bfc" id="L19" title="All 2 branches covered.">        if (userId &lt;= 0) {</span>
+<span class="fc" id="L20">            throw new IllegalArgumentException(&quot;user_id must be greater than zero&quot;);</span>
+        }
+<span class="fc" id="L22">        Map&lt;String, Object&gt; user = api.getUser(userId);</span>
+<span class="fc" id="L23">        return normalizeUser(user);</span>
+    }
+
+    public List&lt;Map&lt;String, Object&gt;&gt; listUsers() throws IOException {
+<span class="fc" id="L27">        List&lt;Map&lt;String, Object&gt;&gt; users = api.listUsers();</span>
+<span class="fc" id="L28">        List&lt;Map&lt;String, Object&gt;&gt; normalized = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        for (Map&lt;String, Object&gt; user : users) {</span>
+<span class="fc" id="L30">            normalized.add(normalizeUser(user));</span>
+<span class="fc" id="L31">        }</span>
+<span class="fc" id="L32">        return normalized;</span>
+    }
+
+    public Map&lt;String, Object&gt; createUser(String name, String email) throws IOException {
+<span class="fc" id="L36">        name = name.trim();</span>
+<span class="fc" id="L37">        email = email.trim().toLowerCase();</span>
+
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        if (name.isEmpty()) {</span>
+<span class="fc" id="L40">            throw new IllegalArgumentException(&quot;name is required&quot;);</span>
+        }
+<span class="fc bfc" id="L42" title="All 2 branches covered.">        if (!isValidEmail(email)) {</span>
+<span class="fc" id="L43">            throw new IllegalArgumentException(&quot;email is invalid&quot;);</span>
+        }
+
+<span class="fc" id="L46">        Map&lt;String, Object&gt; user = api.createUser(name, email);</span>
+<span class="fc" id="L47">        return normalizeUser(user);</span>
+    }
+
+    public Map&lt;String, Object&gt; updateUser(int userId, String name, String email) throws IOException {
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        if (userId &lt;= 0) {</span>
+<span class="fc" id="L52">            throw new IllegalArgumentException(&quot;user_id must be greater than zero&quot;);</span>
+        }
+<span class="fc bfc" id="L54" title="All 4 branches covered.">        if (name == null &amp;&amp; email == null) {</span>
+<span class="fc" id="L55">            throw new IllegalArgumentException(&quot;at least one field must be supplied&quot;);</span>
+        }
+
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (name != null) {</span>
+<span class="fc" id="L59">            name = name.trim();</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (name.isEmpty()) {</span>
+<span class="fc" id="L61">                throw new IllegalArgumentException(&quot;name cannot be empty&quot;);</span>
+            }
+        }
+
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (email != null) {</span>
+<span class="fc" id="L66">            email = email.trim().toLowerCase();</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">            if (!isValidEmail(email)) {</span>
+<span class="fc" id="L68">                throw new IllegalArgumentException(&quot;email is invalid&quot;);</span>
+            }
+        }
+
+<span class="fc" id="L72">        Map&lt;String, Object&gt; user = api.updateUser(userId, name, email);</span>
+<span class="fc" id="L73">        return normalizeUser(user);</span>
+    }
+
+    private boolean isValidEmail(String email) {
+<span class="pc bpc" id="L77" title="1 of 6 branches missed.">        if (email == null || email.isEmpty() || email.contains(&quot; &quot;)) {</span>
+<span class="fc" id="L78">            return false;</span>
+        }
+<span class="fc" id="L80">        int atIndex = email.indexOf('@');</span>
+<span class="pc bpc" id="L81" title="1 of 4 branches missed.">        if (atIndex &lt;= 0 || atIndex == email.length() - 1) {</span>
+<span class="fc" id="L82">            return false;</span>
+        }
+<span class="fc" id="L84">        int lastAtIndex = email.lastIndexOf('@');</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (atIndex != lastAtIndex) {</span>
+<span class="fc" id="L86">            return false;</span>
+        }
+<span class="fc" id="L88">        String domain = email.substring(atIndex + 1);</span>
+<span class="fc" id="L89">        return domain.contains(&quot;.&quot;);</span>
+    }
+
+    public Map&lt;String, Object&gt; deleteUser(int userId) throws IOException {
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (userId &lt;= 0) {</span>
+<span class="fc" id="L94">            throw new IllegalArgumentException(&quot;user_id must be greater than zero&quot;);</span>
+        }
+<span class="fc" id="L96">        api.deleteUser(userId);</span>
+<span class="fc" id="L97">        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L98">        result.put(&quot;user_id&quot;, userId);</span>
+<span class="fc" id="L99">        result.put(&quot;deleted&quot;, true);</span>
+<span class="fc" id="L100">        return result;</span>
+    }
+
+    private Map&lt;String, Object&gt; normalizeUser(Map&lt;String, Object&gt; user) {
+<span class="fc" id="L104">        Map&lt;String, Object&gt; normalized = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L105">        normalized.put(&quot;id&quot;, user.get(&quot;id&quot;));</span>
+<span class="fc" id="L106">        normalized.put(&quot;name&quot;, user.get(&quot;name&quot;));</span>
+<span class="fc" id="L107">        normalized.put(&quot;email&quot;, user.get(&quot;email&quot;));</span>
+<span class="fc" id="L108">        normalized.put(&quot;username&quot;, user.get(&quot;username&quot;));</span>
+<span class="fc" id="L109">        return normalized;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

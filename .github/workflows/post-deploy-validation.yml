@@ -1,0 +1,47 @@
+name: Post-Deploy Validation
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Railway"]
+    types:
+      - completed
+
+jobs:
+  validate-deployment:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for Railway deployment (60s)
+        run: sleep 60
+
+      - name: Install dependencies
+        run: bash install-ci-deps.sh
+
+      - name: Run deployment validation
+        run: |
+          echo "Running deployment validation..."
+          bash validate-deployment.sh https://claude-ia-mcp-tools-java-staging.up.railway.app
+
+      - name: Run MCP tests
+        run: |
+          echo "Running MCP functional tests..."
+          bash test-railway.sh
+
+      - name: Post results to GitHub
+        if: always()
+        run: |
+          echo "✅ Deployment validation completed"
+          echo "Check logs above for results"
+
+  notify-on-failure:
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify deployment failure
+        run: |
+          echo "❌ Deploy workflow failed. Skipping post-deploy validation."
+          exit 1

@@ -1,10 +1,10 @@
-# MCP Users Server (Java)
+# MCP Users Server with OAuth2 (Java)
 
-MCP (Model Context Protocol) server for user management with clean separation of concerns: API client layer, business logic, and MCP protocol handlers. Supports both local (stdio) and remote (WebSocket) deployments.
+MCP (Model Context Protocol) server for user management with OAuth2 authentication and JWT token validation. Clean layered architecture with API client, business logic, authentication, and MCP protocol handlers. Supports both local (stdio) and remote (WebSocket) deployments with secure token-based access control.
 
 ## Architecture
 
-### Layered Design
+### Layered Design with OAuth2
 
 ```
 ┌─────────────────────────────────────┐
@@ -14,6 +14,12 @@ MCP (Model Context Protocol) server for user management with clean separation of
 │ (stdio)         │ (WebSocket)       │
 └────────┬────────┴────────┬──────────┘
          │                 │
+┌────────▼─────────────────▼──────────┐
+│  OAuth2 Authentication Layer        │
+│  OAuthMiddleware, JwtTokenProvider  │
+│  Token validation on every request  │
+└────────┬──────────────────────────┬─┘
+         │                          │
 ┌────────▼─────────────────▼──────────┐
 │  MCP Protocol Handler               │
 │  ToolRegistry, request validation   │
@@ -36,6 +42,12 @@ MCP (Model Context Protocol) server for user management with clean separation of
 src/main/java/com/example/
 ├── api/
 │   └── ApiClient.java           // HTTP client (no business logic)
+├── auth/                        // OAuth2 Authentication
+│   ├── OAuthConfig.java         // Configuration from env vars
+│   ├── OAuthService.java        // OAuth2 authorization flow
+│   ├── OAuthToken.java          // Token model
+│   ├── OAuthMiddleware.java     // Request validation middleware
+│   └── JwtTokenProvider.java    // JWT generation and validation
 ├── business/
 │   └── UserService.java         // Validation, normalization, business rules
 ├── mcp/
@@ -44,7 +56,35 @@ src/main/java/com/example/
 │   └── ToolRegistry.java        // Tool definitions and schemas
 ```
 
+## OAuth2 Authentication
+
+All MCP tools are protected with OAuth2 authentication using JWT tokens.
+
+### Quick Setup
+
+1. Configure OAuth provider (Google, GitHub, etc.):
+```bash
+export OAUTH_CLIENT_ID="your_client_id"
+export OAUTH_CLIENT_SECRET="your_client_secret"
+export JWT_SECRET="your_jwt_secret_key"
+```
+
+2. Get authorization URL and exchange code for token
+3. Include JWT token in Authorization header for all requests
+
+See [OAUTH2.md](OAUTH2.md) for complete setup and usage guide.
+
+### Token Usage
+
+Include JWT in Authorization header:
+```bash
+curl -H "Authorization: Bearer <jwt_token>" \
+  ws://localhost:8080
+```
+
 ## Tools Exposed
+
+All tools require valid OAuth2 JWT token:
 
 1. **get_user** - Get one user by ID (requires: user_id)
 2. **list_users** - List all users (no parameters)
@@ -170,10 +210,22 @@ open target/site/jacoco/index.html
 
 ## Dependencies
 
+### Core
 - **OkHttp 4.11.0** - Resilient HTTP client with timeouts
 - **Gson 2.10.1** - JSON serialization/deserialization
 - **Java-WebSocket 1.5.4** - WebSocket server for remote deployment
-- **SLF4J 2.0.7 + Logback 1.4.8** - Structured logging to stderr
+
+### Authentication & Security
+- **JJWT 0.12.3** - JWT token generation and validation
+- **Commons Codec 1.16.0** - Security utilities
+- **H2 Database 2.2.224** - In-memory token storage
+- **HikariCP 5.1.0** - Connection pooling
+
+### Logging
+- **SLF4J 2.0.7** - Logging facade
+- **Logback 1.4.8** - Structured logging to stderr
+
+### Testing
 - **JUnit 5.10.0** - Testing framework
 - **Mockito 5.3.1** - Mocking for unit tests
 
@@ -205,7 +257,9 @@ View validation logs: GitHub → Actions → "Post-Deploy Validation"
 
 ## Documentation
 
+- [OAUTH2.md](OAUTH2.md) - OAuth2 authentication setup and usage
 - [SETUP.md](SETUP.md) - Local development setup
 - [TESTS.md](TESTS.md) - Detailed test documentation
 - [CI_CD.md](CI_CD.md) - CI/CD pipeline guide
 - [RAILWAY.md](RAILWAY.md) - Railway deployment guide
+- [POST_DEPLOY_VALIDATION.md](POST_DEPLOY_VALIDATION.md) - Post-deployment validation

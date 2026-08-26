@@ -1,7 +1,0 @@
-GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-MCP Users Server,com.example.api,ApiClient,200,33,10,0,51,11,11,2,6,2
-MCP Users Server,com.example.mcp,ToolRegistry.ToolInfo,0,12,0,0,0,5,0,1,0,1
-MCP Users Server,com.example.mcp,McpServer,578,0,34,0,124,0,29,0,10,0
-MCP Users Server,com.example.mcp,McpWebSocketServer,269,0,8,0,74,0,15,0,11,0
-MCP Users Server,com.example.mcp,ToolRegistry,0,254,0,4,0,44,0,10,0,8
-MCP Users Server,com.example.business,UserService,0,246,2,34,0,58,2,24,0,8

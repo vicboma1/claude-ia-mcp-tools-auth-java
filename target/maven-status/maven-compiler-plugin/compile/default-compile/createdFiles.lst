@@ -1,6 +1,0 @@
-com\example\mcp\ToolRegistry.class
-com\example\business\UserService.class
-com\example\mcp\ToolRegistry$ToolInfo.class
-com\example\mcp\McpServer.class
-com\example\mcp\McpWebSocketServer.class
-com\example\api\ApiClient.class

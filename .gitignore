@@ -1,0 +1,34 @@
+# Build artifacts
+target/
+*.class
+*.jar
+*.war
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+
+# OS
+.DS_Store
+*.bak
+*.tmp
+
+# Setup files (Cygwin installer artifacts)
+setup.bz2
+setup.ini
+setup.ini-save
+
+# Maven
+.classpath
+.project
+.settings/
+
+# JaCoCo coverage
+target/site/
+
+# Local environment
+.env
+.env.local

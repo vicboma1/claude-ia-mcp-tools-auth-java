@@ -86,7 +86,7 @@ echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | java -jar target/mcp-use
 
 ### IntelliJ IDEA
 1. Open the project
-2. Right-click on `pom.xml` â†’ "Run Maven" â†’ "Reload Maven Project"
+2. Right-click on `pom.xml` † "Run Maven" † "Reload Maven Project"
 3. Tests will be recognized automatically
 
 ### VS Code
@@ -96,7 +96,7 @@ echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | java -jar target/mcp-use
 
 ### Eclipse
 1. Import project as "Maven Project"
-2. Right-click â†’ Maven â†’ Update Project
+2. Right-click † Maven † Update Project
 
 ## Troubleshooting
 

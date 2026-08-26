@@ -19,7 +19,7 @@ PAYLOAD=$(echo -n '{"sub":"railway-user-456","email":"railway@example.com","prov
 SIGNATURE=$(echo -n 'railway-signature' | base64 | tr '+/' '-_' | tr -d '=')
 JWT_TOKEN="${HEADER}.${PAYLOAD}.${SIGNATURE}"
 
-echo "✅ JWT Token: ${JWT_TOKEN:0:60}..."
+echo " JWT Token: ${JWT_TOKEN:0:60}..."
 echo ""
 
 # Function to download precompiled binary
@@ -242,18 +242,18 @@ test_tool() {
     response=$(timeout 10 bash -c "echo '$command' | websocat '$RAILWAY_URL' 2>&1" 2>/dev/null)
 
     if [ $? -eq 124 ]; then
-        echo "⚠️  Timeout (server took too long to respond)"
+        echo "  Timeout (server took too long to respond)"
     elif [ -z "$response" ]; then
-        echo "⚠️  No response (server may not be running)"
+        echo "  No response (server may not be running)"
         echo "Hint: Make sure the Railway app is deployed and running"
     else
         # Validate JSON response
         if echo "$response" | jq empty 2>/dev/null; then
-            echo "✅ Valid JSON-RPC response - OK"
+            echo " Valid JSON-RPC response - OK"
             echo "Response:"
             echo "$response" | jq '.'
         else
-            echo "❌ Invalid response format"
+            echo " Invalid response format"
             echo "Raw response: $response"
         fi
     fi
@@ -307,16 +307,16 @@ echo "OAuth2 Railway WebSocket Tests Completed!"
 echo "================================================"
 echo ""
 echo "Test Summary:"
-echo "  ✅ JWT Token Generated: ${JWT_TOKEN:0:80}..."
-echo "  ✅ WebSocket Connection: Tested"
-echo "  ✅ JSON-RPC Requests: 7 tests"
-echo "  ✅ Response Validation: All responses checked for valid JSON-RPC format"
+echo "   JWT Token Generated: ${JWT_TOKEN:0:80}..."
+echo "   WebSocket Connection: Tested"
+echo "   JSON-RPC Requests: 7 tests"
+echo "   Response Validation: All responses checked for valid JSON-RPC format"
 echo ""
 echo "Notes:"
-echo "  • All requests sent via WebSocket transport (wss://)"
-echo "  • JWT token included in test environment"
-echo "  • Full JSON-RPC response validation implemented"
-echo "  • Server must be deployed to Railway for these tests to work"
+echo "  � All requests sent via WebSocket transport (wss://)"
+echo "  � JWT token included in test environment"
+echo "  � Full JSON-RPC response validation implemented"
+echo "  � Server must be deployed to Railway for these tests to work"
 echo ""
 echo "To deploy to Railway:"
 echo "  git push origin main  (triggers deploy.yml workflow)"

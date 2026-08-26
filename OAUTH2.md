@@ -5,16 +5,16 @@ This MCP server now supports OAuth2 authentication with JWT token validation.
 ## Architecture
 
 ```
-┌─────────────────────────────────────┐
-│  OAuth2 Flow                        │
-├─────────────────────────────────────┤
-│  1. User → Authorization URL        │
-│  2. OAuth Provider → Auth Code      │
-│  3. Server → Exchange Code for Token│
-│  4. Server → Generate JWT Token     │
-│  5. Client → Include JWT in header  │
-│  6. OAuthMiddleware → Validate Token│
-└─────────────────────────────────────┘
+
+�  OAuth2 Flow                        �
+�
+�  1. User � Authorization URL        �
+�  2. OAuth Provider � Auth Code      �
+�  3. Server � Exchange Code for Token�
+�  4. Server � Generate JWT Token     �
+�  5. Client � Include JWT in header  �
+�  6. OAuthMiddleware � Validate Token�
+�
 ```
 
 ## Components
@@ -121,11 +121,11 @@ export JWT_SECRET="your_jwt_secret_key"
 
 ## Security Features
 
-- ✅ JWT tokens with HMAC-SHA256 signature
-- ✅ Token expiration (24 hours by default)
-- ✅ Middleware validation on every request
-- ✅ OAuth2 provider integration
-- ✅ User ID extraction from token claims
+-  JWT tokens with HMAC-SHA256 signature
+-  Token expiration (24 hours by default)
+-  Middleware validation on every request
+-  OAuth2 provider integration
+-  User ID extraction from token claims
 
 ## Testing
 

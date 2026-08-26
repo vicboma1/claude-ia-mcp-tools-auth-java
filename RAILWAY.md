@@ -78,7 +78,7 @@ GitHub Actions automatically validates after each deployment:
    - Waits 60 seconds for server to start
    - Runs `validate-deployment.sh` (checks infrastructure)
    - Runs `test-railway.sh` (tests all MCP commands)
-3. **View results**: GitHub â†’ Actions â†’ "Post-Deploy Validation"
+3. **View results**: GitHub † Actions † "Post-Deploy Validation"
 
 **Workflow file:** `.github/workflows/post-deploy-validation.yml`
 

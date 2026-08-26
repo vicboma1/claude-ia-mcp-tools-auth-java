@@ -7,35 +7,35 @@ MCP (Model Context Protocol) server for user management with OAuth2 authenticati
 ### Layered Design with OAuth2
 
 ```
-┌──────────────────────────────────────────┐
-│  Transport Layer                         │
-├──────────────────┬──────────────────────┤
-│ McpServer        │ McpWebSocketServer   │
-│ (stdio/Claude)   │ (WebSocket/Railway)  │
-│ Local mode       │ Remote mode          │
-└────────┬─────────┴────────┬─────────────┘
-         │                  │
-┌────────▼──────────────────▼──────────────┐
-│  OAuth2 Authentication Layer             │
-│  OAuthMiddleware - JWT validation        │
-│  JwtTokenProvider - Token generation     │
-└────────┬──────────────────────────────┬──┘
-         │                              │
-┌────────▼──────────────────────────────▼─┐
-│  MCP Protocol Handler                    │
-│  ToolRegistry, request validation        │
-│  JSON-RPC 2.0 compliance                 │
-└────────┬──────────────────────────────┬──┘
-         │                              │
-┌────────▼──────────────────────────────▼─┐
-│  Business Logic Layer                    │
-│  UserService (reusable, testable)        │
-└────────┬──────────────────────────────┬──┘
-         │                              │
-┌────────▼──────────────────────────────▼─┐
-│  API Client Layer                        │
-│  ApiClient (HTTP only, no logic)         │
-└──────────────────────────────────────────┘
+
+�  Transport Layer                         �
+��
+� McpServer        � McpWebSocketServer   �
+� (stdio/Claude)   � (WebSocket/Railway)  �
+� Local mode       � Remote mode          �
+����
+         �                  �
+��
+�  OAuth2 Authentication Layer             �
+�  OAuthMiddleware - JWT validation        �
+�  JwtTokenProvider - Token generation     �
+���
+         �                              �
+��
+�  MCP Protocol Handler                    �
+�  ToolRegistry, request validation        �
+�  JSON-RPC 2.0 compliance                 �
+���
+         �                              �
+��
+�  Business Logic Layer                    �
+�  UserService (reusable, testable)        �
+���
+         �                              �
+��
+�  API Client Layer                        �
+�  ApiClient (HTTP only, no logic)         �
+�
 ```
 
 **Transport Layer Details:**
@@ -53,20 +53,20 @@ MCP (Model Context Protocol) server for user management with OAuth2 authenticati
 
 ```
 src/main/java/com/example/
-├── api/
-│   └── ApiClient.java           // HTTP client (no business logic)
-├── auth/                        // OAuth2 Authentication
-│   ├── OAuthConfig.java         // Configuration from env vars
-│   ├── OAuthService.java        // OAuth2 authorization flow
-│   ├── OAuthToken.java          // Token model
-│   ├── OAuthMiddleware.java     // Request validation middleware
-│   └── JwtTokenProvider.java    // JWT generation and validation
-├── business/
-│   └── UserService.java         // Validation, normalization, business rules
-├── mcp/
-│   ├── McpServer.java           // JSON-RPC protocol handler (stdio)
-│   ├── McpWebSocketServer.java  // WebSocket server for remote (Railway)
-│   └── ToolRegistry.java        // Tool definitions and schemas
+ api/
+�    ApiClient.java           // HTTP client (no business logic)
+ auth/                        // OAuth2 Authentication
+�    OAuthConfig.java         // Configuration from env vars
+�    OAuthService.java        // OAuth2 authorization flow
+�    OAuthToken.java          // Token model
+�    OAuthMiddleware.java     // Request validation middleware
+�    JwtTokenProvider.java    // JWT generation and validation
+ business/
+�    UserService.java         // Validation, normalization, business rules
+ mcp/
+�    McpServer.java           // JSON-RPC protocol handler (stdio)
+�    McpWebSocketServer.java  // WebSocket server for remote (Railway)
+�    ToolRegistry.java        // Tool definitions and schemas
 ```
 
 ## OAuth2 Authentication
@@ -212,10 +212,10 @@ bash test-local-oauth.sh
 ```
 
 Features:
-- ✅ JWT token generation (HS256)
-- ✅ Full JSON-RPC response validation
-- ✅ OAuth2 implementation verification
-- ✅ 4 core tests with token context
+-  JWT token generation (HS256)
+-  Full JSON-RPC response validation
+-  OAuth2 implementation verification
+-  4 core tests with token context
 
 ### Remote Tests (Railway WebSocket)
 
@@ -225,11 +225,11 @@ bash test-railway.sh
 ```
 
 Features:
-- ✅ Auto-installs websocat (multiple platform support)
-- ✅ WebSocket connection validation
-- ✅ 7 MCP tool tests
-- ✅ Full JSON-RPC response validation
-- ✅ Timeout protection (10s per request)
+-  Auto-installs websocat (multiple platform support)
+-  WebSocket connection validation
+-  7 MCP tool tests
+-  Full JSON-RPC response validation
+-  Timeout protection (10s per request)
 
 ### Remote OAuth2 Tests (Railway WebSocket)
 
@@ -239,16 +239,16 @@ bash test-railway-oauth.sh
 ```
 
 Features:
-- ✅ JWT token generation for Railway
-- ✅ OAuth2 flow validation
-- ✅ 7 tests with clean JSON-RPC
-- ✅ No malformed header injection
-- ✅ Full response validation
+-  JWT token generation for Railway
+-  OAuth2 flow validation
+-  7 tests with clean JSON-RPC
+-  No malformed header injection
+-  Full response validation
 
 **Automatic Validation (Recommended)**
 - GitHub Actions automatically validates after each successful Railway deployment
-- Executes: `install-ci-deps.sh` → `validate-deployment.sh` → `test-railway.sh`
-- View results: GitHub → Actions → "Post-Deploy Validation"
+- Executes: `install-ci-deps.sh` � `validate-deployment.sh` � `test-railway.sh`
+- View results: GitHub � Actions � "Post-Deploy Validation"
 
 See [POST_DEPLOY_VALIDATION.md](POST_DEPLOY_VALIDATION.md) and [install-ci-deps.sh](install-ci-deps.sh) for details.
 
@@ -267,10 +267,10 @@ echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | \
 ### Response Validation
 
 All test scripts validate responses with:
-- ✅ Full JSON-RPC format validation
-- ✅ jq parsing verification
-- ✅ Timeout protection
-- ✅ Error reporting with raw response on failures
+-  Full JSON-RPC format validation
+-  jq parsing verification
+-  Timeout protection
+-  Error reporting with raw response on failures
 
 ## Test Coverage
 
@@ -331,32 +331,32 @@ After each successful Railway deployment, GitHub Actions automatically:
 3. Runs `test-railway.sh` (MCP functional tests)
 4. Reports results in Actions tab
 
-View validation logs: GitHub → Actions → "Post-Deploy Validation"
+View validation logs: GitHub � Actions � "Post-Deploy Validation"
 
 **Robust dependency installation:**
 - Script: `install-ci-deps.sh`
 - Installs: jq, websocat
-- Fallback chain: apt-get → cargo → precompiled binary
+- Fallback chain: apt-get � cargo � precompiled binary
 - Handles CI environments reliably
 
 ## Recent Fixes (v1.0.0)
 
 ### JSON-RPC Response Validation
-- ✅ Fixed `EOFException: End of input at line 2 column 1` in test scripts
-- ✅ Removed `head -1` truncation that was breaking WebSocket responses
-- ✅ Added full response capture with timeout protection (10s)
-- ✅ Implemented proper jq validation for all responses
+-  Fixed `EOFException: End of input at line 2 column 1` in test scripts
+-  Removed `head -1` truncation that was breaking WebSocket responses
+-  Added full response capture with timeout protection (10s)
+-  Implemented proper jq validation for all responses
 
 ### OAuth2 Test Scripts
-- ✅ Fixed malformed header injection in `test-railway-oauth.sh`
-- ✅ Removed corrupted JSON-RPC format from `'. + {headers: {Authorization: $auth}}'`
-- ✅ WebSocket sends clean JSON-RPC commands only (no HTTP headers in body)
-- ✅ Both test-railway.sh and test-railway-oauth.sh now working correctly
+-  Fixed malformed header injection in `test-railway-oauth.sh`
+-  Removed corrupted JSON-RPC format from `'. + {headers: {Authorization: $auth}}'`
+-  WebSocket sends clean JSON-RPC commands only (no HTTP headers in body)
+-  Both test-railway.sh and test-railway-oauth.sh now working correctly
 
 ### JJWT Compatibility
-- ✅ Downgraded from 0.12.3 to 0.11.5 for API compatibility
-- ✅ Changed `parserBuilder()` to `parser()` API
-- ✅ JWT token generation and validation working correctly
+-  Downgraded from 0.12.3 to 0.11.5 for API compatibility
+-  Changed `parserBuilder()` to `parser()` API
+-  JWT token generation and validation working correctly
 
 ## Documentation
 

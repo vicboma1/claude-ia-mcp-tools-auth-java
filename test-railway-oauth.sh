@@ -18,7 +18,7 @@ if ! command -v websocat &> /dev/null; then
     bash install-ci-deps.sh
 fi
 
-echo "✅ Websocat ready"
+echo " Websocat ready"
 echo ""
 
 # Generate test JWT token
@@ -42,17 +42,17 @@ test_tool_oauth() {
     response=$(timeout 10 bash -c "echo '$command' | websocat '$RAILWAY_URL' 2>&1" 2>/dev/null)
 
     if [ $? -eq 124 ]; then
-        echo "⚠️  Timeout (server took too long to respond)"
+        echo "  Timeout (server took too long to respond)"
     elif [ -z "$response" ]; then
-        echo "⚠️  No response (server may not be running)"
+        echo "  No response (server may not be running)"
     else
         # Validate JSON response
         if echo "$response" | jq empty 2>/dev/null; then
-            echo "✅ Valid JSON-RPC response - OK"
+            echo " Valid JSON-RPC response - OK"
             echo "Response:"
             echo "$response" | jq '.'
         else
-            echo "❌ Invalid response format"
+            echo " Invalid response format"
             echo "Raw response: $response"
         fi
     fi
@@ -89,21 +89,21 @@ echo "OAuth2 Railway WebSocket Tests Completed!"
 echo "================================================"
 echo ""
 echo "Test Summary:"
-echo "  ✅ JWT Token Generated: ${JWT_TOKEN:0:80}..."
-echo "  ✅ WebSocket Connection: Tested"
-echo "  ✅ JSON-RPC Requests: 7 tests"
-echo "  ✅ Response Validation: Full JSON-RPC format validation"
+echo "   JWT Token Generated: ${JWT_TOKEN:0:80}..."
+echo "   WebSocket Connection: Tested"
+echo "   JSON-RPC Requests: 7 tests"
+echo "   Response Validation: Full JSON-RPC format validation"
 echo ""
 echo "Notes:"
-echo "  • All requests sent via WebSocket transport (wss://)"
-echo "  • Clean JSON-RPC commands (no malformed header injection)"
-echo "  • Full response validation with jq"
-echo "  • Timeout protection (10s per request)"
+echo "  � All requests sent via WebSocket transport (wss://)"
+echo "  � Clean JSON-RPC commands (no malformed header injection)"
+echo "  � Full response validation with jq"
+echo "  � Timeout protection (10s per request)"
 echo ""
 echo "OAuth2 Implementation:"
-echo "  • JWT Token format: HS256 with sub, email, provider claims"
-echo "  • Token validity: 24 hours"
-echo "  • WebSocket: RFC 6455 standard WebSocket protocol"
+echo "  � JWT Token format: HS256 with sub, email, provider claims"
+echo "  � Token validity: 24 hours"
+echo "  � WebSocket: RFC 6455 standard WebSocket protocol"
 echo ""
 echo "For local OAuth2 testing:"
 echo "  bash test-local-oauth.sh"

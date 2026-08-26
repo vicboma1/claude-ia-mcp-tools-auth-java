@@ -11,17 +11,17 @@ Business logic validation layer tests using Mockito for API client mocking.
 #### getUser Tests (5 tests)
 -  Success: Returns normalized user
 -  Normalization: Removes extra fields, keeps only id/name/email/username
--  Edge Case: User ID = 0 â†’ throws IllegalArgumentException
--  Edge Case: Negative user IDs â†’ throws IllegalArgumentException
--  Edge Case: MAX_VALUE user ID â†’ handled correctly
--  Error: IOException from API â†’ propagated
+-  Edge Case: User ID = 0 † throws IllegalArgumentException
+-  Edge Case: Negative user IDs † throws IllegalArgumentException
+-  Edge Case: MAX_VALUE user ID † handled correctly
+-  Error: IOException from API † propagated
 
 #### listUsers Tests (4 tests)
 -  Success: Returns list of normalized users
 -  Empty: Returns empty list when no users
 -  Large: Handles 1000+ users efficiently
 -  Normalization: Each user normalized independently
--  Error: IOException from API â†’ propagated
+-  Error: IOException from API † propagated
 
 #### createUser Tests (10 tests)
 -  Success: Creates user with normalized inputs
@@ -30,45 +30,45 @@ Business logic validation layer tests using Mockito for API client mocking.
   - Converts email to lowercase
   - Preserves spaces inside names
 -  Empty/Whitespace Names:
-  - Empty string â†’ throws
-  - Spaces only â†’ throws
-  - Tabs/newlines â†’ throws
+  - Empty string † throws
+  - Spaces only † throws
+  - Tabs/newlines † throws
 -  Empty/Whitespace Emails:
-  - Empty string â†’ throws
-  - Whitespace only â†’ throws
+  - Empty string † throws
+  - Whitespace only † throws
 -  Invalid Emails:
-  - No @ symbol â†’ throws
-  - Multiple @ symbols â†’ throws
-  - @ with no domain â†’ throws
+  - No @ symbol † throws
+  - Multiple @ symbols † throws
+  - @ with no domain † throws
 -  Special Characters: Accepts JosÃ©, accents, etc.
 -  Long Names: Accepts 1000+ character names
 -  Long Emails: Accepts very long email addresses
--  Error Propagation: API errors â†’ propagated
+-  Error Propagation: API errors † propagated
 
 #### updateUser Tests (9 tests)
 -  Update Name Only: Updates name, keeps email
 -  Update Email Only: Updates email, keeps name
 -  Update Both: Updates both fields simultaneously
 -  Validation:
-  - Zero ID â†’ throws
-  - Negative ID â†’ throws
-  - No fields supplied (both null) â†’ throws
-  - Empty name after trim â†’ throws
-  - Invalid email without @ â†’ throws
+  - Zero ID † throws
+  - Negative ID † throws
+  - No fields supplied (both null) † throws
+  - Empty name after trim † throws
+  - Invalid email without @ † throws
 -  Normalization: Trims and lowercases inputs
 -  Null Handling: Allows null fields for partial updates
 -  Edge Cases:
-  - MAX_VALUE user ID â†’ handled
-  - Very long strings â†’ handled
+  - MAX_VALUE user ID † handled
+  - Very long strings † handled
 
 #### deleteUser Tests (6 tests)
 -  Success: Deletes user, returns {user_id, deleted: true}
 -  Validation:
-  - Zero ID â†’ throws
-  - Negative ID â†’ throws
-  - MAX_VALUE ID â†’ handled
+  - Zero ID † throws
+  - Negative ID † throws
+  - MAX_VALUE ID † handled
 -  Response Structure: Always returns user_id and deleted fields
--  Error Handling: IOException from API â†’ propagated
+-  Error Handling: IOException from API † propagated
 
 ### 2. McpServerTest.java (20+ tests)
 
@@ -134,8 +134,8 @@ HTTP client layer tests covering initialization, error handling, and edge cases.
 -  Handles requests within timeout
 
 #### Error Handling Tests
--  Invalid endpoints â†’ IOException
--  Null URL â†’ Exception
+-  Invalid endpoints † IOException
+-  Null URL † Exception
 -  Connection timeouts
 -  Read timeouts
 -  Write timeouts
@@ -239,9 +239,9 @@ open target/site/jacoco/index.html
 ```
 
 ### Run Tests in IDE
-- **IntelliJ IDEA**: Right-click test class â†’ Run or Debug
+- **IntelliJ IDEA**: Right-click test class † Run or Debug
 - **VS Code**: Click "Run Test" above test methods
-- **Eclipse**: Right-click â†’ Run As â†’ JUnit Test
+- **Eclipse**: Right-click † Run As † JUnit Test
 
 ## Test Patterns Used
 

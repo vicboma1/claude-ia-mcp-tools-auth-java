@@ -54,4 +54,4 @@ jq --version
 websocat --version
 
 echo ""
-echo "✅ All dependencies installed successfully!"
+echo " All dependencies installed successfully!"

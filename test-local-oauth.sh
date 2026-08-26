@@ -33,7 +33,7 @@ PAYLOAD=$(echo -n '{"sub":"oauth-user-123","email":"oauth@example.com","provider
 SIGNATURE=$(echo -n 'oauth-signature' | base64 | tr '+/' '-_' | tr -d '=')
 JWT_TOKEN="${HEADER}.${PAYLOAD}.${SIGNATURE}"
 
-echo "✅ JWT Token Generated Successfully"
+echo " JWT Token Generated Successfully"
 echo ""
 echo "Token Components:"
 echo "  Header: ${HEADER:0:40}..."
@@ -56,14 +56,14 @@ test_tool() {
 
     if [ -n "$response" ]; then
         if echo "$response" | jq empty 2>/dev/null; then
-            echo "✅ Valid JSON-RPC response - OK"
+            echo " Valid JSON-RPC response - OK"
             echo "Response:"
             echo "$response" | jq '.'
         else
-            echo "❌ Invalid response"
+            echo " Invalid response"
         fi
     else
-        echo "⚠️  No response"
+        echo "  No response"
     fi
     echo ""
 }
@@ -77,14 +77,14 @@ echo "================================================"
 echo "OAuth2 Implementation Status"
 echo "================================================"
 echo ""
-echo "✅ JWT Token Generation: WORKING"
-echo "✅ Token Validation: IMPLEMENTED"
-echo "✅ OAuth Middleware: IMPLEMENTED"
-echo "✅ MCP Server: RUNNING"
+echo " JWT Token Generation: WORKING"
+echo " Token Validation: IMPLEMENTED"
+echo " OAuth Middleware: IMPLEMENTED"
+echo " MCP Server: RUNNING"
 echo ""
 echo "OAuth2 Deployment:"
-echo "  • Local (stdio): JWT tokens generated and validated in code"
-echo "  • Railway (WebSocket): Full OAuth2 with HTTP headers supported"
+echo "  � Local (stdio): JWT tokens generated and validated in code"
+echo "  � Railway (WebSocket): Full OAuth2 with HTTP headers supported"
 echo ""
 echo "To test OAuth2 with HTTP headers on Railway:"
 echo "  bash test-railway-oauth.sh"

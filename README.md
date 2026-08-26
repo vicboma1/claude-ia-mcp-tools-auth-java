@@ -7,34 +7,47 @@ MCP (Model Context Protocol) server for user management with OAuth2 authenticati
 ### Layered Design with OAuth2
 
 ```
-┌─────────────────────────────────────┐
-│  Transport Layer                    │
-├─────────────────┬───────────────────┤
-│ McpServer       │ McpWebSocketServer│
-│ (stdio)         │ (WebSocket)       │
-└────────┬────────┴────────┬──────────┘
-         │                 │
-┌────────▼─────────────────▼──────────┐
-│  OAuth2 Authentication Layer        │
-│  OAuthMiddleware, JwtTokenProvider  │
-│  Token validation on every request  │
-└────────┬──────────────────────────┬─┘
-         │                          │
-┌────────▼─────────────────▼──────────┐
-│  MCP Protocol Handler               │
-│  ToolRegistry, request validation   │
-└────────┬──────────────────────────┬─┘
-         │                          │
-┌────────▼──────────────────────────▼┐
-│  Business Logic Layer               │
-│  UserService (reusable)             │
-└────────┬──────────────────────────┬─┘
-         │                          │
-┌────────▼──────────────────────────▼┐
-│  API Client Layer                   │
-│  ApiClient (HTTP, no logic)         │
-└─────────────────────────────────────┘
+┌──────────────────────────────────────────┐
+│  Transport Layer                         │
+├──────────────────┬──────────────────────┤
+│ McpServer        │ McpWebSocketServer   │
+│ (stdio/Claude)   │ (WebSocket/Railway)  │
+│ Local mode       │ Remote mode          │
+└────────┬─────────┴────────┬─────────────┘
+         │                  │
+┌────────▼──────────────────▼──────────────┐
+│  OAuth2 Authentication Layer             │
+│  OAuthMiddleware - JWT validation        │
+│  JwtTokenProvider - Token generation     │
+└────────┬──────────────────────────────┬──┘
+         │                              │
+┌────────▼──────────────────────────────▼─┐
+│  MCP Protocol Handler                    │
+│  ToolRegistry, request validation        │
+│  JSON-RPC 2.0 compliance                 │
+└────────┬──────────────────────────────┬──┘
+         │                              │
+┌────────▼──────────────────────────────▼─┐
+│  Business Logic Layer                    │
+│  UserService (reusable, testable)        │
+└────────┬──────────────────────────────┬──┘
+         │                              │
+┌────────▼──────────────────────────────▼─┐
+│  API Client Layer                        │
+│  ApiClient (HTTP only, no logic)         │
+└──────────────────────────────────────────┘
 ```
+
+**Transport Layer Details:**
+- **McpServer** (stdio): Used for local development and Claude Desktop
+  - Reads JSON-RPC from stdin
+  - Writes responses to stdout
+  - Logs to stderr
+- **McpWebSocketServer** (WebSocket): Used for Railway and cloud deployment
+  - Listens on WebSocket port (default: 8080)
+  - Health check HTTP on port+1 (8081)
+  - Handles multiple concurrent connections
+  - RFC 6455 WebSocket standard
 
 ### Code Structure
 
@@ -144,13 +157,21 @@ Claude Desktop configuration:
 Use this for Railway or other cloud platforms:
 
 ```bash
+# Runs McpWebSocketServer (recommended for production)
 java -jar target/mcp-users-server-*.jar
+
+# Or explicitly specify the main class
+java -cp target/mcp-users-server-*.jar com.example.mcp.McpWebSocketServer
 ```
 
 Server will:
-- Listen on WebSocket at port (default: 8080)
-- Listen on HTTP health checks at port+1 (default: 8081)
-- Log startup information with endpoint details
+- **McpWebSocketServer** listens on WebSocket at port (default: 8080)
+- HTTP health checks on port+1 (default: 8081)
+- Logs startup information with endpoint details
+- Handles multiple concurrent connections
+- OAuth2 middleware validates all requests
+
+Default behavior: fat JAR runs `McpWebSocketServer` (see pom.xml mainClass configuration)
 
 For Railway deployment, see [RAILWAY.md](RAILWAY.md) for full configuration.
 

@@ -156,23 +156,73 @@ For Railway deployment, see [RAILWAY.md](RAILWAY.md) for full configuration.
 
 ## Testing
 
-### Local Tests
+### Unit Tests (JUnit 5)
 
 ```bash
-# Run unit tests
+# Run all unit tests (188+ tests)
 mvn test
 
-# Run integration tests with test script
+# Run with coverage report
+mvn test jacoco:report
+open target/site/jacoco/index.html
+```
+
+### Local Integration Tests (stdio)
+
+Test MCP server locally without OAuth2:
+```bash
 bash test-local.sh
 ```
 
-### Remote Tests (Railway)
+Shows 7 tests:
+- Initialize Server
+- List Tools
+- Get User
+- List Users  
+- Create User
+- Update User
+- Delete User
 
-Manual testing:
+### Local OAuth2 Tests (stdio)
+
+Test MCP server locally with JWT token generation:
 ```bash
-# Requires websocat: brew install websocat (or uses install-ci-deps.sh)
+bash test-local-oauth.sh
+```
+
+Features:
+- ✅ JWT token generation (HS256)
+- ✅ Full JSON-RPC response validation
+- ✅ OAuth2 implementation verification
+- ✅ 4 core tests with token context
+
+### Remote Tests (Railway WebSocket)
+
+Test deployed server on Railway:
+```bash
 bash test-railway.sh
 ```
+
+Features:
+- ✅ Auto-installs websocat (multiple platform support)
+- ✅ WebSocket connection validation
+- ✅ 7 MCP tool tests
+- ✅ Full JSON-RPC response validation
+- ✅ Timeout protection (10s per request)
+
+### Remote OAuth2 Tests (Railway WebSocket)
+
+Test deployed server with OAuth2:
+```bash
+bash test-railway-oauth.sh
+```
+
+Features:
+- ✅ JWT token generation for Railway
+- ✅ OAuth2 flow validation
+- ✅ 7 tests with clean JSON-RPC
+- ✅ No malformed header injection
+- ✅ Full response validation
 
 **Automatic Validation (Recommended)**
 - GitHub Actions automatically validates after each successful Railway deployment
@@ -184,14 +234,22 @@ See [POST_DEPLOY_VALIDATION.md](POST_DEPLOY_VALIDATION.md) and [install-ci-deps.
 ### Manual Testing
 
 ```bash
-# stdio
+# stdio mode
 echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | \
   java -cp target/mcp-users-server-*.jar com.example.mcp.McpServer
 
-# WebSocket
+# WebSocket mode (requires websocat)
 echo '{"jsonrpc":"2.0","method":"initialize","id":1}' | \
   websocat ws://localhost:8080
 ```
+
+### Response Validation
+
+All test scripts validate responses with:
+- ✅ Full JSON-RPC format validation
+- ✅ jq parsing verification
+- ✅ Timeout protection
+- ✅ Error reporting with raw response on failures
 
 ## Test Coverage
 
@@ -211,12 +269,12 @@ open target/site/jacoco/index.html
 ## Dependencies
 
 ### Core
-- **OkHttp 4.11.0** - Resilient HTTP client with timeouts
+- **OkHttp 4.11.0** - Resilient HTTP client with 10-second timeouts
 - **Gson 2.10.1** - JSON serialization/deserialization
 - **Java-WebSocket 1.5.4** - WebSocket server for remote deployment
 
 ### Authentication & Security
-- **JJWT 0.12.3** - JWT token generation and validation
+- **JJWT 0.11.5** - JWT token generation and validation (HS256)
 - **Commons Codec 1.16.0** - Security utilities
 - **H2 Database 2.2.224** - In-memory token storage
 - **HikariCP 5.1.0** - Connection pooling
@@ -228,6 +286,11 @@ open target/site/jacoco/index.html
 ### Testing
 - **JUnit 5.10.0** - Testing framework
 - **Mockito 5.3.1** - Mocking for unit tests
+
+### CLI & Deployment
+- **websocat 1.12.0** - WebSocket client for testing
+  - Auto-installed by `install-ci-deps.sh`
+  - Supports: Linux, macOS, Windows (Git Bash/Cygwin)
 
 ## CI/CD Pipeline
 
@@ -254,6 +317,25 @@ View validation logs: GitHub → Actions → "Post-Deploy Validation"
 - Installs: jq, websocat
 - Fallback chain: apt-get → cargo → precompiled binary
 - Handles CI environments reliably
+
+## Recent Fixes (v1.0.0)
+
+### JSON-RPC Response Validation
+- ✅ Fixed `EOFException: End of input at line 2 column 1` in test scripts
+- ✅ Removed `head -1` truncation that was breaking WebSocket responses
+- ✅ Added full response capture with timeout protection (10s)
+- ✅ Implemented proper jq validation for all responses
+
+### OAuth2 Test Scripts
+- ✅ Fixed malformed header injection in `test-railway-oauth.sh`
+- ✅ Removed corrupted JSON-RPC format from `'. + {headers: {Authorization: $auth}}'`
+- ✅ WebSocket sends clean JSON-RPC commands only (no HTTP headers in body)
+- ✅ Both test-railway.sh and test-railway-oauth.sh now working correctly
+
+### JJWT Compatibility
+- ✅ Downgraded from 0.12.3 to 0.11.5 for API compatibility
+- ✅ Changed `parserBuilder()` to `parser()` API
+- ✅ JWT token generation and validation working correctly
 
 ## Documentation
 

@@ -8,34 +8,35 @@ MCP (Model Context Protocol) server for user management with OAuth2 authenticati
 
 ```
 
-�  Transport Layer                         �
-��
-� McpServer        � McpWebSocketServer   �
-� (stdio/Claude)   � (WebSocket/Railway)  �
-� Local mode       � Remote mode          �
-����
-         �                  �
-��
-�  OAuth2 Authentication Layer             �
-�  OAuthMiddleware - JWT validation        �
-�  JwtTokenProvider - Token generation     �
-���
-         �                              �
-��
-�  MCP Protocol Handler                    �
-�  ToolRegistry, request validation        �
-�  JSON-RPC 2.0 compliance                 �
-���
-         �                              �
-��
-�  Business Logic Layer                    �
-�  UserService (reusable, testable)        �
-���
-         �                              �
-��
-�  API Client Layer                        �
-�  ApiClient (HTTP only, no logic)         �
-�
+┌─────────────────────────────────────────┐
+│  Transport Layer                        │
+├──────────────────┬──────────────────────┤
+│ McpServer        │ McpWebSocketServer   │
+│ (stdio/Claude)   │ (WebSocket/Railway)  │
+│ Local mode       │ Remote mode          │
+└────────┬─────────┴────────┬─────────────┘
+         │                  │
+┌────────▼──────────────────▼──────────────┐
+│  OAuth2 Authentication Layer             │
+│  OAuthMiddleware - JWT validation        │
+│  JwtTokenProvider - Token generation     │
+└────────┬──────────────────────────────┬──┘
+         │                              │
+┌────────▼──────────────────────────────▼─┐
+│  MCP Protocol Handler                   │
+│  ToolRegistry, request validation       │
+│  JSON-RPC 2.0 compliance                │
+└────────┬─────────────────────────────┬──┘
+         │                             │
+┌────────▼─────────────────────────────▼─┐
+│  Business Logic Layer                  │
+│  UserService (reusable, testable)      │
+└────────┬──────────────────────────────┬┘
+         │                              │
+┌────────▼──────────────────────────────▼─┐
+│  API Client Layer                       │
+│  ApiClient (HTTP only, no logic)        │
+└─────────────────────────────────────────┘
 ```
 
 **Transport Layer Details:**
@@ -53,20 +54,20 @@ MCP (Model Context Protocol) server for user management with OAuth2 authenticati
 
 ```
 src/main/java/com/example/
- api/
-�    ApiClient.java           // HTTP client (no business logic)
- auth/                        // OAuth2 Authentication
-�    OAuthConfig.java         // Configuration from env vars
-�    OAuthService.java        // OAuth2 authorization flow
-�    OAuthToken.java          // Token model
-�    OAuthMiddleware.java     // Request validation middleware
-�    JwtTokenProvider.java    // JWT generation and validation
- business/
-�    UserService.java         // Validation, normalization, business rules
- mcp/
-�    McpServer.java           // JSON-RPC protocol handler (stdio)
-�    McpWebSocketServer.java  // WebSocket server for remote (Railway)
-�    ToolRegistry.java        // Tool definitions and schemas
+├── api/
+│   └── ApiClient.java           // HTTP client (no business logic)
+├── auth/                        // OAuth2 Authentication
+│   ├── OAuthConfig.java         // Configuration from env vars
+│   ├── OAuthService.java        // OAuth2 authorization flow
+│   ├── OAuthToken.java          // Token model
+│   ├── OAuthMiddleware.java     // Request validation middleware
+│   └── JwtTokenProvider.java    // JWT generation and validation
+├── business/
+│   └── UserService.java         // Validation, normalization, business rules
+├── mcp/
+│   ├── McpServer.java           // JSON-RPC protocol handler (stdio)
+│   ├── McpWebSocketServer.java  // WebSocket server for remote (Railway)
+│   └── ToolRegistry.java        // Tool definitions and schemas`
 ```
 
 ## OAuth2 Authentication
@@ -247,8 +248,8 @@ Features:
 
 **Automatic Validation (Recommended)**
 - GitHub Actions automatically validates after each successful Railway deployment
-- Executes: `install-ci-deps.sh` � `validate-deployment.sh` � `test-railway.sh`
-- View results: GitHub � Actions � "Post-Deploy Validation"
+- Executes: `install-ci-deps.sh` † `validate-deployment.sh` † `test-railway.sh`
+- View results: GitHub † Actions † "Post-Deploy Validation"
 
 See [POST_DEPLOY_VALIDATION.md](POST_DEPLOY_VALIDATION.md) and [install-ci-deps.sh](install-ci-deps.sh) for details.
 
@@ -331,12 +332,12 @@ After each successful Railway deployment, GitHub Actions automatically:
 3. Runs `test-railway.sh` (MCP functional tests)
 4. Reports results in Actions tab
 
-View validation logs: GitHub � Actions � "Post-Deploy Validation"
+View validation logs: GitHub † Actions † "Post-Deploy Validation"
 
 **Robust dependency installation:**
 - Script: `install-ci-deps.sh`
 - Installs: jq, websocat
-- Fallback chain: apt-get � cargo � precompiled binary
+- Fallback chain: apt-get † cargo † precompiled binary
 - Handles CI environments reliably
 
 ## Recent Fixes (v1.0.0)
